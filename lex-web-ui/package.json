@@ -19,6 +19,7 @@
   },
   "dependencies": {
     "amazon-connect-chatjs": "^1.1.7",
+    "apexcharts": "^3.40.0",
     "aws-sdk": "^2.1354.0",
     "core-js": "^3.6.5",
     "jsonwebtoken": "^9.0.0",
@@ -26,6 +27,7 @@
     "material-design-icons": "^3.0.1",
     "roboto-fontface": "^0.10.0",
     "vue": "^2.6.11",
+    "vue-apexcharts": "^1.6.2",
     "vue-router": "^3.2.0",
     "vuetify": "^1.5.0",
     "vuetify-datetime-picker": "^2.1.1",

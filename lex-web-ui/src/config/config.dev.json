@@ -24,7 +24,7 @@
   },
   "ui": {
     "parentOrigin": "",
-    "toolbarTitle": "Order Flowers",
+    "toolbarTitle": "FinBot Chat",
     "toolbarLogo": "",
     "positiveFeedbackIntent": "Thumbs up",
     "negativeFeedbackIntent": "Thumbs down",
@@ -51,7 +51,7 @@
     "waitingForAgentMessage": "Thanks for waiting. An agent will be with you when available.",
     "waitingForAgentMessageIntervalSeconds": 60,
     "agentJoinedMessage": "{Agent} has joined.",
-    "agentLeftMessage": "{Agent} has left.", 
+    "agentLeftMessage": "{Agent} has left.",
     "chatEndedMessage": "Chat ended.",
     "attachChatTranscript": true
   },

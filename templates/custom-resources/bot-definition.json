@@ -124,9 +124,7 @@
           "description": "The type of flowers to pick up",
           "name": "FlowerType",
           "priority": 1,
-          "sampleUtterances": [
-            "I would like to order {FlowerType}"
-          ],
+          "sampleUtterances": ["I would like to order {FlowerType}"],
           "slotConstraint": "Required",
           "slotType": "FlowerTypes",
           "slotTypeVersion": "$LATEST",
@@ -134,9 +132,9 @@
             "maxAttempts": 2,
             "messages": [
               {
-                "content": "What type of flowers would you like to order?",
+                content:\"{\"negativeStocks\":[\"AAPL\",\"BAC\"],\"positiveStocks\":[\"AMZN\"],\"neutralStocks\":[\"GOOGL\",\"META\"],\"percentages\":[60,10,30],\"stocks\":[\"AAPL, BAC\",\"AMZN\",\"GOOGL, META\"],\"name\":\"John Smith\",\"RiskScore\":\"50%\"}\",
                 "contentType": "PlainText"
-              }
+              },
             ],
             "responseCard": "{\"version\":1,\"contentType\":\"application/vnd.amazonaws.card.generic\",\"genericAttachments\":[{\"imageUrl\":\"https://s3.amazonaws.com/aws-bigdata-blog/artifacts/aws-lex-web-ui/artifacts/flowers.jpeg\",\"subTitle\":\"Pick a Flower Type\",\"title\":\"Flower Types\",\"buttons\":[{\"text\":\"Roses\",\"value\":\"roses\"},{\"text\":\"Lilies\",\"value\":\"lilies\"},{\"text\":\"Tulips\",\"value\":\"tulips\"}]}]}"
           }
@@ -151,6 +149,10 @@
           "valueElicitationPrompt": {
             "maxAttempts": 2,
             "messages": [
+              {
+                content:\"{\"negativeStocks\":[\"AAPL\",\"BAC\"],\"positiveStocks\":[\"AMZN\"],\"neutralStocks\":[\"GOOGL\",\"META\"],\"percentages\":[60,10,30],\"stocks\":[\"AAPL, BAC\",\"AMZN\",\"GOOGL, META\"],\"name\":\"John Smith\",\"RiskScore\":\"50%\"}\",
+                "contentType": "PlainText"
+              },
               {
                 "content": "What day do you want the {FlowerType} to be picked up?",
                 "contentType": "PlainText"

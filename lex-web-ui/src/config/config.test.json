@@ -9,16 +9,16 @@
   },
   "lex": {
     "botName": "WebUiOrderFlowers",
-    "initialText": "You can ask me for help ordering flowers. Just type \"order flowers\" or click on the mic and say it.",
-    "initialSpeechInstruction": "Say 'Order Flowers' to get started."
+    "initialText": "You can ask me for help ordering flowers. Just type \"FinBot\" or click on the mic and say it.",
+    "initialSpeechInstruction": "Say 'FinBot' to get started."
   },
   "polly": {
     "voiceId": "Salli"
   },
   "ui": {
     "parentOrigin": "http://localhost:8080",
-    "pageTitle": "Order Flowers Bot",
-    "toolbarTitle": "Order Flowers"
+    "pageTitle": "FinBot Bot",
+    "toolbarTitle": "FinBot"
   },
   "recorder": {
     "preset": "speech_recognition"

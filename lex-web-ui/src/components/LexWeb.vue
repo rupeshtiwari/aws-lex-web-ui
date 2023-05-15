@@ -1,55 +1,26 @@
 <template>
-  <v-app id="lex-web"
-    v-bind:ui-minimized="isUiMinimized"
-  >
-    <min-button
-      v-bind:toolbar-color="toolbarColor"
-      v-bind:is-ui-minimized="isUiMinimized"
-      v-on:toggleMinimizeUi="toggleMinimizeUi"
-    ></min-button>
-    <toolbar-container
-      v-if="!isUiMinimized"
-      v-bind:userName="userNameValue"
-      v-bind:toolbar-title="toolbarTitle"
-      v-bind:toolbar-color="toolbarColor"
-      v-bind:toolbar-logo="toolbarLogo"
+  <v-app id="lex-web" v-bind:ui-minimized="isUiMinimized">
+    <min-button v-bind:toolbar-color="toolbarColor" v-bind:is-ui-minimized="isUiMinimized"
+      v-on:toggleMinimizeUi="toggleMinimizeUi"></min-button>
+    <toolbar-container v-if="!isUiMinimized" v-bind:userName="userNameValue" v-bind:toolbar-title="toolbarTitle"
+      v-bind:toolbar-color="toolbarColor" v-bind:toolbar-logo="toolbarLogo"
       v-bind:toolbarStartLiveChatLabel="toolbarStartLiveChatLabel"
-      v-bind:toolbarStartLiveChatIcon="toolbarStartLiveChatIcon"
-      v-bind:toolbarEndLiveChatLabel="toolbarEndLiveChatLabel"
-      v-bind:toolbarEndLiveChatIcon="toolbarEndLiveChatIcon"
-      v-bind:is-ui-minimized="isUiMinimized"
-      v-on:toggleMinimizeUi="toggleMinimizeUi"
-      @requestLogin="handleRequestLogin"
-      @requestLogout="handleRequestLogout"
-      @requestLiveChat="handleRequestLiveChat"
-      @endLiveChat="handleEndLiveChat"
-      transition="fade-transition"
-    ></toolbar-container>
+      v-bind:toolbarStartLiveChatIcon="toolbarStartLiveChatIcon" v-bind:toolbarEndLiveChatLabel="toolbarEndLiveChatLabel"
+      v-bind:toolbarEndLiveChatIcon="toolbarEndLiveChatIcon" v-bind:is-ui-minimized="isUiMinimized"
+      v-on:toggleMinimizeUi="toggleMinimizeUi" @requestLogin="handleRequestLogin" @requestLogout="handleRequestLogout"
+      @requestLiveChat="handleRequestLiveChat" @endLiveChat="handleEndLiveChat"
+      transition="fade-transition"></toolbar-container>
 
-    <v-content
-      v-if="!isUiMinimized"
-    >
-      <v-container
-        class="message-list-container"
-        v-bind:class="`toolbar-height-${toolbarHeightClassSuffix}`"
-        fluid pa-0
-      >
-        <message-list v-if="!isUiMinimized"
-        ></message-list>
+    <v-content v-if="!isUiMinimized">
+      <v-container class="message-list-container" v-bind:class="`toolbar-height-${toolbarHeightClassSuffix}`" fluid pa-0>
+        <message-list v-if="!isUiMinimized"></message-list>
       </v-container>
     </v-content>
 
-    <input-container
-      ref="InputContainer"
-      v-if="!isUiMinimized && !hasButtons"
+    <input-container ref="InputContainer" v-if="!isUiMinimized && !hasButtons"
       v-bind:text-input-placeholder="textInputPlaceholder"
-      v-bind:initial-speech-instruction="initialSpeechInstruction"
-    ></input-container>
-    <div
-      v-if="isSFXOn"
-      id="sound"
-      aria-hidden="true"
-    />
+      v-bind:initial-speech-instruction="initialSpeechInstruction"></input-container>
+    <div v-if="isSFXOn" id="sound" aria-hidden="true" />
   </v-app>
 </template>
 
@@ -181,15 +152,15 @@ export default {
 
         // Check for required config values (region & poolId)
         if (!this.$store.state || !this.$store.state.config) {
-          return Promise.reject(new Error('no config found'))
+          return Promise.reject(new Error('no config found'));
         }
         const region = this.$store.state.config.region ? this.$store.state.config.region : this.$store.state.config.cognito.region;
         if (!region) {
-          return Promise.reject(new Error('no region found in config or config.cognito'))
+          return Promise.reject(new Error('no region found in config or config.cognito'));
         }
         const poolId = this.$store.state.config.cognito.poolId;
         if (!poolId) {
-          return Promise.reject(new Error('no cognito.poolId found in config'))
+          return Promise.reject(new Error('no cognito.poolId found in config'));
         }
 
         const AWSConfigConstructor = (window.AWS && window.AWS.Config) ?
@@ -233,7 +204,7 @@ export default {
         ];
         console.info('CONFIG : ', this.$store.state.config);
         if (this.$store.state && this.$store.state.config &&
-            this.$store.state.config.ui.enableLiveChat) {
+          this.$store.state.config.ui.enableLiveChat) {
           promises.push(this.$store.dispatch('initLiveChat'));
         }
         return Promise.all(promises);
@@ -436,7 +407,7 @@ export default {
             }));
           break;
         case 'setSessionAttribute':
-          console.log(`From LexWeb: ${JSON.stringify(evt.data,null,2)}`);
+          console.log(`From LexWeb: ${JSON.stringify(evt.data, null, 2)}`);
           this.$store.dispatch(
             'setSessionAttribute',
             { key: evt.data.key, value: evt.data.value },
@@ -566,15 +537,18 @@ NOTE: not using var() for different heights due to IE11 compatibility
 .message-list-container {
   position: fixed;
 }
+
 .message-list-container.toolbar-height-sm {
   top: 56px;
   height: calc(100% - 2 * 56px);
 }
+
 /* yes, the height is smaller in mid sizes */
 .message-list-container.toolbar-height-md {
   top: 48px;
   height: calc(100% - 2 * 48px);
 }
+
 .message-list-container.toolbar-height-lg {
   top: 64px;
   height: calc(100% - 2 * 64px);
