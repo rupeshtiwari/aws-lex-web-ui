@@ -10,7 +10,7 @@
     <toolbar-container
       v-if="!isUiMinimized"
       v-bind:userName="userNameValue"
-      v-bind:toolbar-title="toolbarTitle"
+      toolbar-title="FinBot Chat"
       v-bind:toolbar-color="toolbarColor"
       v-bind:toolbar-logo="toolbarLogo"
       v-bind:toolbarStartLiveChatLabel="toolbarStartLiveChatLabel"
