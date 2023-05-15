@@ -10,131 +10,91 @@
           <!-- contains message bubble and avatar -->
           <v-flex d-flex class="message-bubble-avatar-container">
             <v-layout row class="message-bubble-row">
-              <div
-                v-if="shouldShowAvatarImage"
-                v-bind:style="avatarBackground"
-                tabindex="-1"
-                class="avatar"
-                aria-hidden="true"
-              >
+              <div v-if="shouldShowAvatarImage" v-bind:style="avatarBackground" tabindex="-1" class="avatar"
+                aria-hidden="true">
               </div>
-              <div
-                tabindex="0"
-                v-on:focus="onMessageFocus"
-                v-on:blur="onMessageBlur"
-                class="message-bubble focusable"
-              >
-                <message-text
-                  v-bind:message="message"
-                  v-if="'text' in message && message.text !== null && message.text.length && !shouldDisplayInteractiveMessage"
-                ></message-text>
-                <div
-                  v-if="shouldDisplayInteractiveMessage && message.interactiveMessage.templateType == 'ListPicker'">
+              <div tabindex="0" v-on:focus="onMessageFocus" v-on:blur="onMessageBlur" class="message-bubble focusable">
+                <message-text v-bind:message="message"
+                  v-if="'text' in message && message.text !== null && message.text.length && !shouldDisplayInteractiveMessage"></message-text>
+                <div v-if="shouldDisplayInteractiveMessage && message.interactiveMessage.templateType == 'ListPicker'">
                   <v-card-title primary-title>
                     <div>
                       <img :src="message.interactiveMessage.data.content.imageData">
-                      <div class="headline">{{message.interactiveMessage.data.content.title}}</div>
-                      <span>{{message.interactiveMessage.data.content.subtitle}}</span>
+                      <div class="headline">{{ message.interactiveMessage.data.content.title }}</div>
+                      <span>{{ message.interactiveMessage.data.content.subtitle }}</span>
                     </div>
                   </v-card-title>
                   <v-list two-line class="message-bubble interactive-row">
                     <template v-for="(item, index) in message.interactiveMessage.data.content.elements">
-                        <v-list-tile
-                          v-on:click="resendMessage(item.title)" >
-                          <v-list-tile-avatar v-if="item.imageData">
-                            <img :src="item.imageData">
-                          </v-list-tile-avatar>
-                          <v-list-tile-content>
-                            <v-list-tile-title v-html="item.title"></v-list-tile-title>
-                            <v-list-tile-sub-title v-if="item.subtitle" v-html="item.subtitle"></v-list-tile-sub-title>
-                          </v-list-tile-content>
-                        </v-list-tile>
-                        <v-divider></v-divider>
+                      <v-list-tile v-on:click="resendMessage(item.title)">
+                        <v-list-tile-avatar v-if="item.imageData">
+                          <img :src="item.imageData">
+                        </v-list-tile-avatar>
+                        <v-list-tile-content>
+                          <v-list-tile-title v-html="item.title"></v-list-tile-title>
+                          <v-list-tile-sub-title v-if="item.subtitle" v-html="item.subtitle"></v-list-tile-sub-title>
+                        </v-list-tile-content>
+                      </v-list-tile>
+                      <v-divider></v-divider>
                     </template>
                   </v-list>
                 </div>
-                <div
-                  v-if="shouldDisplayInteractiveMessage && message.interactiveMessage.templateType == 'TimePicker'">
+                <div v-if="shouldDisplayInteractiveMessage && message.interactiveMessage.templateType == 'TimePicker'">
                   <v-card-title primary-title>
                     <div>
-                      <div class="headline">{{message.interactiveMessage.data.content.title}}</div>
-                      <span>{{message.interactiveMessage.data.content.subtitle}}</span>
+                      <div class="headline">{{ message.interactiveMessage.data.content.title }}</div>
+                      <span>{{ message.interactiveMessage.data.content.subtitle }}</span>
                     </div>
-                  </v-card-title>                  
-                    <template v-for="item in this.message.interactiveMessage.timeslots">
-                      <v-subheader>{{ item.date }}</v-subheader>
-                      <v-list two-line class="message-bubble interactive-row">
-                        <v-list-tile>
-                          <v-list-tile
-                            v-for="subItem in item.slots"
-                            v-bind:key="subItem.localTime"
-                            v-bind:data="subItem"
-                            @click="resendMessage(subItem.date)"
-                          >
-                            <v-list-tile-content>
-                              <v-list-tile-title>{{ subItem.localTime }}</v-list-tile-title>
-                            </v-list-tile-content>
-                          </v-list-tile>
-                      </v-list-tile>                      
-                  </v-list>
-                </template>
+                  </v-card-title>
+                  <template v-for="item in this.message.interactiveMessage.timeslots">
+                    <v-subheader>{{ item.date }}</v-subheader>
+                    <v-list two-line class="message-bubble interactive-row">
+                      <v-list-tile>
+                        <v-list-tile v-for="subItem in item.slots" v-bind:key="subItem.localTime" v-bind:data="subItem"
+                          @click="resendMessage(subItem.date)">
+                          <v-list-tile-content>
+                            <v-list-tile-title>{{ subItem.localTime }}</v-list-tile-title>
+                          </v-list-tile-content>
+                        </v-list-tile>
+                      </v-list-tile>
+                    </v-list>
+                  </template>
                 </div>
                 <div
                   v-if="shouldDisplayInteractiveMessage && message.interactiveMessage.templateType == 'DateTimePicker'">
-                  <v-toolbar-title>{{message.interactiveMessage.data.content.title}}</v-toolbar-title>
-                  <v-datetime-picker 
-                    v-model="datetime"
-                    :text-field-props="textFieldProps"
-                  >
+                  <v-toolbar-title>{{ message.interactiveMessage.data.content.title }}</v-toolbar-title>
+                  <v-datetime-picker v-model="datetime" :text-field-props="textFieldProps">
                   </v-datetime-picker>
                   <v-btn v-on:click="sendDateTime(datetime)" depressed>Confirm</v-btn>
                 </div>
                 <div
                   v-if="message.id === this.$store.state.messages.length - 1 && isLastMessageFeedback && message.type === 'bot' && botDialogState && showDialogFeedback"
-                  class="feedback-state"
-                >
-                  <v-icon
-                    v-on:click="onButtonClick(positiveIntent)"
-                    v-bind:class="{'feedback-icons-positive': !positiveClick, 'positiveClick': positiveClick}"
-                    tabindex="0"
-                  >
+                  class="feedback-state">
+                  <v-icon v-on:click="onButtonClick(positiveIntent)"
+                    v-bind:class="{ 'feedback-icons-positive': !positiveClick, 'positiveClick': positiveClick }"
+                    tabindex="0">
                     thumb_up
                   </v-icon>
-                  <v-icon
-                    v-on:click="onButtonClick(negativeIntent)"
-                    v-bind:class="{'feedback-icons-negative': !negativeClick, 'negativeClick': negativeClick}"
-                    tabindex="0"
-                  >
+                  <v-icon v-on:click="onButtonClick(negativeIntent)"
+                    v-bind:class="{ 'feedback-icons-negative': !negativeClick, 'negativeClick': negativeClick }"
+                    tabindex="0">
                     thumb_down
                   </v-icon>
                 </div>
-                <v-icon
-                  medium
-                  v-if="message.type === 'bot' && botDialogState && showDialogStateIcon"
-                  v-bind:class="`dialog-state-${botDialogState.state}`"
-                  class="dialog-state"
-                >
-                  {{botDialogState.icon}}
+                <v-icon medium v-if="message.type === 'bot' && botDialogState && showDialogStateIcon"
+                  v-bind:class="`dialog-state-${botDialogState.state}`" class="dialog-state">
+                  {{ botDialogState.icon }}
                 </v-icon>
                 <div v-if="message.type === 'human' && message.audio">
-                    <audio>
-                      <source v-bind:src="message.audio" type="audio/wav">
-                    </audio>
-                    <v-btn
-                    v-on:click="playAudio"
-                    tabindex="0"
-                    icon
-                    v-show="!showMessageMenu"
-                    class="icon-color ml-0 mr-0"
-                  >
+                  <audio>
+                    <source v-bind:src="message.audio" type="audio/wav">
+                  </audio>
+                  <v-btn v-on:click="playAudio" tabindex="0" icon v-show="!showMessageMenu" class="icon-color ml-0 mr-0">
                     <v-icon class="play-icon">play_circle_outline</v-icon>
                   </v-btn>
                 </div>
-                 <v-menu offset-y v-if="message.type === 'human'" v-show="showMessageMenu">
-                  <v-btn
-                    slot="activator"
-                    icon
-                  >
+                <v-menu offset-y v-if="message.type === 'human'" v-show="showMessageMenu">
+                  <v-btn slot="activator" icon>
                     <v-icon class="smicon">
                       more_vert
                     </v-icon>
@@ -142,14 +102,12 @@
                   <v-list>
                     <v-list-tile>
                       <v-list-tile-title v-on:click="resendMessage(message.text)">
-                          <v-icon>replay</v-icon>
+                        <v-icon>replay</v-icon>
                       </v-list-tile-title>
                     </v-list-tile>
-                    <v-list-tile
-                      v-if="message.type === 'human' && message.audio"
-                      class="message-audio">
+                    <v-list-tile v-if="message.type === 'human' && message.audio" class="message-audio">
                       <v-list-tile-title v-on:click="playAudio">
-                            <v-icon>play_circle_outline</v-icon>
+                        <v-icon>play_circle_outline</v-icon>
                       </v-list-tile-title>
                     </v-list-tile>
                   </v-list>
@@ -157,43 +115,31 @@
               </div>
             </v-layout>
           </v-flex>
-          <v-flex
-            v-if="shouldShowMessageDate && isMessageFocused"
-            class="text-xs-center message-date"
-            aria-hidden="true"
-          >
-           {{messageHumanDate}}
+          <v-flex v-if="shouldShowMessageDate && isMessageFocused" class="text-xs-center message-date" aria-hidden="true">
+            {{ messageHumanDate }}
           </v-flex>
         </v-layout>
       </v-flex>
-      <v-flex
-        v-if="shouldDisplayResponseCard"
-        class="response-card"
-        d-flex
-        mt-2 mr-2 ml-3
-      >
-        <response-card
-          v-for="(card, index) in message.responseCard.genericAttachments"
-          v-bind:response-card="card"
-          v-bind:key="index"
-        >
+
+      <v-flex v-if="shouldDisplayChart" class="response-card" d-flex mt-2 mr-2 ml-3>
+        <template>
+          <div class="example">
+            <apexcharts width="500" height="350" type="pie" :options="chartData.chartOptions" :series="chartData.series">
+            </apexcharts>
+          </div>
+        </template>
+      </v-flex>
+
+      <v-flex v-if="shouldDisplayResponseCard" class="response-card" d-flex mt-2 mr-2 ml-3>
+        <response-card v-for="(card, index) in message.responseCard.genericAttachments" v-bind:response-card="card"
+          v-bind:key="index">
         </response-card>
       </v-flex>
-      <v-flex
-        v-if="shouldDisplayResponseCardV2 && !shouldDisplayResponseCard"
-      >
-        <v-flex v-for="(item, index) in message.responseCardsLexV2"
-          class="response-card"
-          d-flex
-          mt-2 mr-2 ml-3
-          v-bind:key="index"
-        >
-        <response-card
-          v-for="(card, index) in item.genericAttachments"
-          v-bind:response-card="card"
-          v-bind:key="index"
-        >
-        </response-card>
+      <v-flex v-if="shouldDisplayResponseCardV2 && !shouldDisplayResponseCard">
+        <v-flex v-for="(item, index) in message.responseCardsLexV2" class="response-card" d-flex mt-2 mr-2 ml-3
+          v-bind:key="index">
+          <response-card v-for="(card, index) in item.genericAttachments" v-bind:response-card="card" v-bind:key="index">
+          </response-card>
         </v-flex>
       </v-flex>
     </v-layout>
@@ -241,6 +187,19 @@ export default {
     };
   },
   computed: {
+
+    chartData() {
+      if (!this.shouldDisplayChart()) return null;
+      const message = JSON.parse(this.$store.state.messages[0]);
+      return {
+        series: message.percentages,
+        chartOptions: {
+          labels: message.stocks,
+          colors: ["#FF0000", "#00FF00", "#87CEFA"],
+        },
+      };
+    },
+
     botDialogState() {
       if (!('dialogState' in this.message)) {
         return null;
@@ -275,7 +234,7 @@ export default {
     },
     showDialogFeedback() {
       if (this.$store.state.config.ui.positiveFeedbackIntent.length > 2
-      && this.$store.state.config.ui.negativeFeedbackIntent.length > 2) {
+        && this.$store.state.config.ui.negativeFeedbackIntent.length > 2) {
         return true;
       }
       return false;
@@ -283,11 +242,21 @@ export default {
     showErrorIcon() {
       return this.$store.state.config.ui.showErrorIcon;
     },
+    shouldDisplayChart() {
+      if (this.$store.state.messages.length > 0) {
+        const text = this.$store.state.messages[0];
+        console.log(text);
+        if (typeof text.search === "function" && text.search(/stocks/gi) > 0) {
+          return true;
+        }
+      }
+      return false;
+    },
     shouldDisplayResponseCard() {
       return (
         this.message.responseCard &&
         (this.message.responseCard.version === '1' ||
-         this.message.responseCard.version === 1) &&
+          this.message.responseCard.version === 1) &&
         this.message.responseCard.contentType === 'application/vnd.amazonaws.card.generic' &&
         'genericAttachments' in this.message.responseCard &&
         this.message.responseCard.genericAttachments instanceof Array
@@ -302,43 +271,41 @@ export default {
       );
     },
     shouldDisplayInteractiveMessage() {
-      try {           
-          this.message.interactiveMessage = JSON.parse(this.message.text);
-          
-          // Considering anything with the templateType property on a valid JSON object to be an interactive message
-          if (!this.message.interactiveMessage.hasOwnProperty("templateType"))
-          {
-            return false;
-          }
+      try {
+        this.message.interactiveMessage = JSON.parse(this.message.text);
 
-          if (this.message.interactiveMessage.templateType == 'TimePicker')
-          {                     
-            var sortedslots = this.message.interactiveMessage.data.content.timeslots.sort((a, b) => a.date.localeCompare(b.date));
-            const dateFormatOptions = { weekday: 'long', month: 'long', day: 'numeric' };
-            const timeFormatOptions = { hour: "numeric", minute: "numeric", timeZoneName: "short" };
-            const localeId = localStorage.getItem('selectedLocale') ? localStorage.getItem('selectedLocale') : this.$store.state.config.lex.v2BotLocaleId.split(',')[0];
-            var locale = (localeId || 'en-US').replace('_','-');
-
-            var dateArray = [];
-            sortedslots.forEach(function (slot, index) {            
-              slot.localTime = new Date(slot.date).toLocaleTimeString(locale, timeFormatOptions);
-              const msToMidnightOfDate = new Date(slot.date).setHours(0, 0, 0, 0);
-              const dateKey = new Date(msToMidnightOfDate).toLocaleDateString(locale, dateFormatOptions);
-
-              let existingDate = dateArray.find(e => e.date === dateKey);
-              if (existingDate) {
-                existingDate.slots.push(slot)
-              }
-              else {
-                var item = { date: dateKey, slots: [slot] };
-                dateArray.push(item);
-              }
-            });
-
-            this.message.interactiveMessage.timeslots = dateArray;           
-          }
-      } catch (e) {
+        // Considering anything with the templateType property on a valid JSON object to be an interactive message
+        if (!this.message.interactiveMessage.hasOwnProperty("templateType")) {
           return false;
+        }
+
+        if (this.message.interactiveMessage.templateType == 'TimePicker') {
+          var sortedslots = this.message.interactiveMessage.data.content.timeslots.sort((a, b) => a.date.localeCompare(b.date));
+          const dateFormatOptions = { weekday: 'long', month: 'long', day: 'numeric' };
+          const timeFormatOptions = { hour: "numeric", minute: "numeric", timeZoneName: "short" };
+          const localeId = localStorage.getItem('selectedLocale') ? localStorage.getItem('selectedLocale') : this.$store.state.config.lex.v2BotLocaleId.split(',')[0];
+          var locale = (localeId || 'en-US').replace('_', '-');
+
+          var dateArray = [];
+          sortedslots.forEach(function (slot, index) {
+            slot.localTime = new Date(slot.date).toLocaleTimeString(locale, timeFormatOptions);
+            const msToMidnightOfDate = new Date(slot.date).setHours(0, 0, 0, 0);
+            const dateKey = new Date(msToMidnightOfDate).toLocaleDateString(locale, dateFormatOptions);
+
+            let existingDate = dateArray.find(e => e.date === dateKey);
+            if (existingDate) {
+              existingDate.slots.push(slot);
+            }
+            else {
+              var item = { date: dateKey, slots: [slot] };
+              dateArray.push(item);
+            }
+          });
+
+          this.message.interactiveMessage.timeslots = dateArray;
+        }
+      } catch (e) {
+        return false;
       }
       return true;
     },
@@ -364,13 +331,13 @@ export default {
     return {
       getRCButtonsDisabled: this.getRCButtonsDisabled,
       setRCButtonsDisabled: this.setRCButtonsDisabled
-    }
+    };
   },
   methods: {
-    setRCButtonsDisabled: function() {
+    setRCButtonsDisabled: function () {
       this.disableCardButtons = true;
     },
-    getRCButtonsDisabled: function() {
+    getRCButtonsDisabled: function () {
       return this.disableCardButtons;
     },
     resendMessage(messageText) {
@@ -447,7 +414,7 @@ export default {
   created() {
     if (this.message.responseCard && 'genericAttachments' in this.message.responseCard) {
       if (this.message.responseCard.genericAttachments[0].buttons &&
-          this.hideInputFields && !this.$store.state.hasButtons) {
+        this.hideInputFields && !this.$store.state.hasButtons) {
         this.$store.dispatch('toggleHasButtons');
       }
     } else if (this.$store.state.config.ui.hideInputFieldsForButtonResponse) {
@@ -464,11 +431,13 @@ export default {
   font-size: 14px;
 }
 
-.message, .message-bubble-column {
+.message,
+.message-bubble-column {
   flex: 0 0 auto;
 }
 
-.message, .message-bubble-row {
+.message,
+.message-bubble-row {
   max-width: 80vw;
 }
 
@@ -495,25 +464,29 @@ export default {
 }
 
 .focusable {
-  box-shadow: 0 0.25px 0.75px rgba(0,0,0,0.12), 0 0.25px 0.5px rgba(0,0,0,0.24);
-  transition: all 0.3s cubic-bezier(.25,.8,.25,1);
+  box-shadow: 0 0.25px 0.75px rgba(0, 0, 0, 0.12), 0 0.25px 0.5px rgba(0, 0, 0, 0.24);
+  transition: all 0.3s cubic-bezier(.25, .8, .25, 1);
   cursor: default;
 }
 
 .focusable:focus {
-  box-shadow: 0 1.25px 3.75px rgba(0,0,0,0.25), 0 1.25px 2.5px rgba(0,0,0,0.22);
+  box-shadow: 0 1.25px 3.75px rgba(0, 0, 0, 0.25), 0 1.25px 2.5px rgba(0, 0, 0, 0.22);
   outline: none;
 }
 
 .message-bot .message-bubble {
-  background-color: #FFEBEE; /* red-50 from material palette */
+  background-color: #FFEBEE;
+  /* red-50 from material palette */
 }
 
 .message-agent .message-bubble {
-  background-color: #FFEBEE; /* red-50 from material palette */
+  background-color: #FFEBEE;
+  /* red-50 from material palette */
 }
+
 .message-human .message-bubble {
-  background-color: #E8EAF6; /* indigo-50 from material palette */
+  background-color: #E8EAF6;
+  /* indigo-50 from material palette */
 }
 
 .message-feedback .message-bubble {
@@ -527,6 +500,7 @@ export default {
 .icon.dialog-state-ok {
   color: green;
 }
+
 .icon.dialog-state-fail {
   color: red;
 }
@@ -540,34 +514,34 @@ export default {
   align-self: center;
 }
 
-.icon.feedback-icons-positive{
+.icon.feedback-icons-positive {
   color: grey;
   /* color: #E8EAF6; */
   /* color: green; */
   padding: .125em;
 }
 
-.positiveClick{
+.positiveClick {
   color: green;
   padding: .125em;
 }
 
-.negativeClick{
+.negativeClick {
   color: red;
   padding: .125em;
 }
 
-.icon.feedback-icons-positive:hover{
-  color:green;
+.icon.feedback-icons-positive:hover {
+  color: green;
 }
 
-.icon.feedback-icons-negative{
+.icon.feedback-icons-negative {
   /* color: #E8EAF6; */
   color: grey;
   padding: .125em;
 }
 
-.icon.feedback-icons-negative:hover{
+.icon.feedback-icons-negative:hover {
   color: red;
 }
 
