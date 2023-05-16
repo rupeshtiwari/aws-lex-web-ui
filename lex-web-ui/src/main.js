@@ -19,6 +19,8 @@
 import Vue from 'vue';
 import router from '@/router';
 import LexApp from '@/LexApp';
+import VueApexCharts from "vue-apexcharts";
+Vue.component("apexchart", VueApexCharts);
 
 /* eslint-disable no-new */
 new Vue({

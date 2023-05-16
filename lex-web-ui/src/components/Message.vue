@@ -14,6 +14,18 @@
                 aria-hidden="true">
               </div>
               <div tabindex="0" v-on:focus="onMessageFocus" v-on:blur="onMessageBlur" class="message-bubble focusable">
+
+                <v-flex v-if="'text' in message && message.text !== null && shouldDisplayChart" class="response-card"
+                  d-flex mt-2 mr-2 ml-3>
+                  <template>
+                    <div class="example">
+                      <apexcharts width="500" height="350" type="pie" :options="chartData.chartOptions"
+                        :series="chartData.series">
+                      </apexcharts>
+                    </div>
+                  </template>
+                </v-flex>
+
                 <message-text v-bind:message="message"
                   v-if="'text' in message && message.text !== null && message.text.length && !shouldDisplayInteractiveMessage"></message-text>
                 <div v-if="shouldDisplayInteractiveMessage && message.interactiveMessage.templateType == 'ListPicker'">
@@ -121,14 +133,6 @@
         </v-layout>
       </v-flex>
 
-      <v-flex v-if="shouldDisplayChart" class="response-card" d-flex mt-2 mr-2 ml-3>
-        <template>
-          <div class="example">
-            <apexcharts width="500" height="350" type="pie" :options="chartData.chartOptions" :series="chartData.series">
-            </apexcharts>
-          </div>
-        </template>
-      </v-flex>
 
       <v-flex v-if="shouldDisplayResponseCard" class="response-card" d-flex mt-2 mr-2 ml-3>
         <response-card v-for="(card, index) in message.responseCard.genericAttachments" v-bind:response-card="card"
@@ -189,14 +193,17 @@ export default {
   computed: {
 
     chartData() {
-      if (!this.shouldDisplayChart()) return null;
+      if (!this.shouldDisplayChart) return null;
       const idx = this.$store.state.messages.length - 1;
-      const msg = this.$store.state.messages.length[idx];
-      const message = JSON.parse(msg);
+      const msg = this.$store.state.messages[idx];
+      var myEscapedJSONString = msg.text.replace(/[\"]/g, '').replace(/[\s]/g, '').replace(/[\\]/g, '"');
+      var portfolioString = myEscapedJSONString.split("If")[0];
+      var portfolio = JSON.parse(portfolioString);
+      portfolio;
       return {
-        series: message.percentages,
+        series: portfolio.percentages,
         chartOptions: {
-          labels: message.stocks,
+          labels: portfolio.stocks,
           colors: ["#FF0000", "#00FF00", "#87CEFA"],
         },
       };
@@ -248,9 +255,9 @@ export default {
       if (this.$store.state.messages == null || this.$store.state.messages.length < 1) return false;
 
       const idx = this.$store.state.messages.length - 1;
-      const msg = this.$store.state.messages.length[idx];
+      const msg = this.$store.state.messages[idx];
 
-      if (msg && msg.text && typeof msg.text.search === "function" && msg.search(/stocks/gi) > 0) {
+      if (msg && msg.text && typeof msg.text.search === "function" && msg.text.search(/stocks/gi) > 0) {
         return true;
       }
 
