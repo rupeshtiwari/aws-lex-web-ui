@@ -1,9 +1,10 @@
 {
   "region": "us-east-1",
   "cognito": {
-    "poolId": "us-east-1:a8b329b0-c5e8-455e-b72e-7e97a4199443",
-    "appUserPoolClientId": "2nbgroudpch72r3bjlg1fsqgnd",
-    "appUserPoolName": "us-east-1_cEdRRrGaa",
+    "poolId": "us-east-1:7dcb4b4f-38c9-4dc5-b734-e97dc5a29409",
+    "appUserPoolClientId": "7iv1jo0m147d00b6vh7ljkchm7",
+    "appUserPoolName": "us-east-1_U64EB9d9N",
+    "appDomainName": "lexkwebkuikidentitypoolconfigkhripytpsaffc855874109978.auth.us-east-1.amazoncognito.com",
     "aws_cognito_region": "us-east-1",
     "region": "us-east-1"
   },
@@ -21,13 +22,13 @@
     "liveChatTerms": "live chat"
   },
   "lex": {
-    "v2BotId": "",
-    "v2BotAliasId": "",
+    "v2BotId": "GWKFG0GZ79",
+    "v2BotAliasId": "TSTALIASID",
     "v2BotLocaleId": "en_US",
-    "botName": "WebUiOrderFlowers",
+    "botName": "GWKFG0GZ79",
     "botAlias": "$LATEST",
-    "initialText": "You can ask me for help ordering flowers. Just type \"Buy flowers\" or click on the mic and say it.",
-    "initialSpeechInstruction": "Say 'Buy Flowers' to get started.",
+    "initialText": "Welcom to FinBERT chat!",
+    "initialSpeechInstruction": "Say 'Order Flowers' to get started.",
     "initialUtterance": "",
     "reInitSessionAttributesOnRestart": false,
     "region": "us-east-1",
@@ -35,8 +36,8 @@
     "retryCountPostTextTimeout": "1"
   },
   "ui": {
-    "parentOrigin": "https://dg7puysx2tord.cloudfront.net",
-    "toolbarTitle": "Order Flowers",
+    "parentOrigin": "http://www.finbertchat.com",
+    "toolbarTitle": "FinBERT Chat",
     "toolbarLogo": "",
     "toolbarStartLiveChatLabel": "Start Live Chat",
     "toolbarEndLiveChatLabel": "End Live Chat",
@@ -69,7 +70,7 @@
     "preset": "speech_recognition"
   },
   "iframe": {
-    "iframeOrigin": "https://dg7puysx2tord.cloudfront.net",
+    "iframeOrigin": "https://d2utgtef9w2lot.cloudfront.net",
     "shouldLoadIframeMinimized": false,
     "iframeSrcPath": "/index.html#/?lexWebUiEmbed=true"
   }

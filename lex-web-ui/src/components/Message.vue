@@ -190,7 +190,9 @@ export default {
 
     chartData() {
       if (!this.shouldDisplayChart()) return null;
-      const message = JSON.parse(this.$store.state.messages[0]);
+      const idx = this.$store.state.messages.length - 1;
+      const msg = this.$store.state.messages.length[idx];
+      const message = JSON.parse(msg);
       return {
         series: message.percentages,
         chartOptions: {
@@ -243,13 +245,15 @@ export default {
       return this.$store.state.config.ui.showErrorIcon;
     },
     shouldDisplayChart() {
-      if (this.$store.state.messages.length > 0) {
-        const text = this.$store.state.messages[0];
-        console.log(text);
-        if (typeof text.search === "function" && text.search(/stocks/gi) > 0) {
-          return true;
-        }
+      if (this.$store.state.messages == null || this.$store.state.messages.length < 1) return false;
+
+      const idx = this.$store.state.messages.length - 1;
+      const msg = this.$store.state.messages.length[idx];
+
+      if (msg && msg.text && typeof msg.text.search === "function" && msg.search(/stocks/gi) > 0) {
+        return true;
       }
+
       return false;
     },
     shouldDisplayResponseCard() {
