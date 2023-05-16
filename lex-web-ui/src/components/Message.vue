@@ -176,11 +176,11 @@ export default {
   },
   data() {
     return {
-      series: [60, 10, 30],
-      chartOptions: {
-        labels: ["AAPL, BAC", "AMZ", "GOOGL,META"],
-        colors: ["#FF0000", "#00FF00", "#87CEFA"],
-      },
+      // series: [60, 10, 30],
+      // chartOptions: {
+      //   labels: ["AAPL, BAC", "AMZ", "GOOGL,META"],
+      //   colors: ["#FF0000", "#00FF00", "#87CEFA"],
+      // },
       // chartOptions: this.$store.state.messages[this.$store.state.messages.length - 2]?.text?.chatData?.chartOptions,
       // series: this.$store.state.messages[this.$store.state.messages.length - 2]?.text?.chatData?.series,
       isMessageFocused: false,
@@ -199,19 +199,16 @@ export default {
     };
   },
   computed: {
-    // series() {
-    //   return [{
-    //     "data": [1, 2, 3]
-    //   }];
-    // },
-    // chartOptions() {
-    //   return {
-    //     "data": {
-    //       labels: ["AAPL, BAC", "AMZ", "GOOGL,META"],
-    //       colors: ["#FF0000", "#00FF00", "#87CEFA"],
-    //     }
-    //   };
-    // },
+    series() {
+      return [1, 2, 3];
+    },
+    chartOptions() {
+      return {
+        labels: ["AAPL, BAC", "AMZ", "GOOGL,META"],
+        colors: ["#FF0000", "#00FF00", "#87CEFA"],
+
+      };
+    },
 
     shouldDisplayChart() {
       const msg = this.$store.state.messages[this.$store.state.messages.length - 2];
