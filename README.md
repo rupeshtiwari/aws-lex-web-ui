@@ -14,6 +14,11 @@ Or embedded into an existing site as a chatbot widget:
 
 <img src="./img/webapp-iframe.gif" width=480>
 
+## In FinBot branch whats new?
+I integrated with [ApexCharts](https://apexcharts.com/) and rendered pie chart.
+
+![](finbot.png)
+
 ### Features
 - Mobile ready responsive UI with full page or embeddable widget modes
 - Support for voice and text with the ability to seamless switch from
