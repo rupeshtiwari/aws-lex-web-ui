@@ -198,7 +198,7 @@ export default {
       var myEscapedJSONString = msg.text.replace(/[\"]/g, '').replace(/[\s]/g, '').replace(/[\\]/g, '"');
       var portfolioString = myEscapedJSONString.split("If")[0];
       var portfolio = JSON.parse(portfolioString);
-      portfolio;
+     
       return {
         series: portfolio.percentages,
         chartOptions: {
