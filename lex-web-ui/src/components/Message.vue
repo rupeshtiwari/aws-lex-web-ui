@@ -2,7 +2,12 @@
   <v-flex d-flex class="message">
     <!-- contains message and response card -->
     <v-layout column ma-2 class="message-layout">
+      <template>
 
+        <apexcharts width="500" height="350" type="pie" :options="chartOptions" :series="series">
+        </apexcharts>
+
+      </template>
       <!-- contains message bubble and date -->
       <v-flex d-flex class="message-bubble-date-container">
         <v-layout column class="message-bubble-column">
@@ -123,15 +128,12 @@
           </v-flex>
         </v-layout>
       </v-flex>
-      <v-flex v-if="'text' in message && message.text !== null && shouldDisplayChart" class="response-card" d-flex mt-2
-        mr-2 ml-3>
-        <template>
-          <div class="example">
-            <apexcharts width="500" height="350" type="pie" :options="chartData.chartOptions" :series="chartData.series">
-            </apexcharts>
-          </div>
-        </template>
-      </v-flex>
+
+
+
+
+
+
 
       <v-flex v-if="shouldDisplayResponseCard" class="response-card" d-flex mt-2 mr-2 ml-3>
         <response-card v-for="(card, index) in message.responseCard.genericAttachments" v-bind:response-card="card"
@@ -164,16 +166,23 @@ License for the specific language governing permissions and limitations under th
 */
 import MessageText from './MessageText';
 import ResponseCard from './ResponseCard';
-
+import VueApexCharts from "vue-apexcharts";
 export default {
   name: 'message',
   props: ['message', 'feedback'],
   components: {
     MessageText,
-    ResponseCard,
+    ResponseCard, apexcharts: VueApexCharts,
   },
   data() {
     return {
+      series: [60, 10, 30],
+      chartOptions: {
+        labels: ["AAPL, BAC", "AMZ", "GOOGL,META"],
+        colors: ["#FF0000", "#00FF00", "#87CEFA"],
+      },
+      // chartOptions: this.$store.state.messages[this.$store.state.messages.length - 2]?.text?.chatData?.chartOptions,
+      // series: this.$store.state.messages[this.$store.state.messages.length - 2]?.text?.chatData?.series,
       isMessageFocused: false,
       messageHumanDate: 'Now',
       datetime: new Date(),
@@ -190,22 +199,24 @@ export default {
     };
   },
   computed: {
+    // series() {
+    //   return [{
+    //     "data": [1, 2, 3]
+    //   }];
+    // },
+    // chartOptions() {
+    //   return {
+    //     "data": {
+    //       labels: ["AAPL, BAC", "AMZ", "GOOGL,META"],
+    //       colors: ["#FF0000", "#00FF00", "#87CEFA"],
+    //     }
+    //   };
+    // },
 
-    chartData() {
-      if (!this.shouldDisplayChart) return null;
-      const idx = this.$store.state.messages.length - 1;
-      const msg = this.$store.state.messages[idx];
-      var myEscapedJSONString = msg.text.replace(/[\"]/g, '').replace(/[\s]/g, '').replace(/[\\]/g, '"');
-      var portfolioString = myEscapedJSONString.split("If")[0];
-      var portfolio = JSON.parse(portfolioString);
-     
-      return {
-        series: portfolio.percentages,
-        chartOptions: {
-          labels: portfolio.stocks,
-          colors: ["#FF0000", "#00FF00", "#87CEFA"],
-        },
-      };
+    shouldDisplayChart() {
+      const msg = this.$store.state.messages[this.$store.state.messages.length - 2];
+      const canShow = msg?.text?.chatData != null;
+      return canShow;
     },
 
     botDialogState() {
@@ -250,18 +261,7 @@ export default {
     showErrorIcon() {
       return this.$store.state.config.ui.showErrorIcon;
     },
-    shouldDisplayChart() {
-      if (this.$store.state.messages == null || this.$store.state.messages.length < 1) return false;
 
-      const idx = this.$store.state.messages.length - 1;
-      const msg = this.$store.state.messages[idx];
-
-      if (msg && msg.text && typeof msg.text.search === "function" && msg.text.search(/stocks/gi) > 0) {
-        return true;
-      }
-
-      return false;
-    },
     shouldDisplayResponseCard() {
       return (
         this.message.responseCard &&

@@ -12,21 +12,23 @@
  */
 
 /* eslint no-console: ["error", { allow: ["warn", "error"] }] */
-const zlib = require('zlib');
+const zlib = require("zlib");
 
 function b64CompressedToObject(src) {
-  return JSON.parse(zlib.unzipSync(Buffer.from(src, 'base64'))
-    .toString('utf-8'));
+  return JSON.parse(
+    zlib.unzipSync(Buffer.from(src, "base64")).toString("utf-8")
+  );
 }
 
 function b64CompressedToString(src) {
-  return zlib.unzipSync(Buffer.from(src, 'base64'))
-    .toString('utf-8').replaceAll('"', '');
+  return zlib
+    .unzipSync(Buffer.from(src, "base64"))
+    .toString("utf-8")
+    .replaceAll('"', "");
 }
 
 function compressAndB64Encode(src) {
-  return zlib.gzipSync(Buffer.from(JSON.stringify(src)))
-    .toString('base64');
+  return zlib.gzipSync(Buffer.from(JSON.stringify(src))).toString("base64");
 }
 
 export default class {
@@ -36,45 +38,53 @@ export default class {
   isV2Bot;
   constructor({
     botName,
-    botAlias = '$LATEST',
+    botAlias = "$LATEST",
     userId,
     lexRuntimeClient,
     botV2Id,
     botV2AliasId,
     botV2LocaleId,
-    lexRuntimeV2Client,
+    lexRuntimeV2Client
   }) {
-    if (!botName || !lexRuntimeClient || !lexRuntimeV2Client ||
-      typeof botV2Id === 'undefined' ||
-      typeof botV2AliasId === 'undefined' ||
-      typeof botV2LocaleId === 'undefined'
+    if (
+      !botName ||
+      !lexRuntimeClient ||
+      !lexRuntimeV2Client ||
+      typeof botV2Id === "undefined" ||
+      typeof botV2AliasId === "undefined" ||
+      typeof botV2LocaleId === "undefined"
     ) {
-      console.error(`botName: ${botName} botV2Id: ${botV2Id} botV2AliasId ${botV2AliasId} ` +
-        `botV2LocaleId ${botV2LocaleId} lexRuntimeClient ${lexRuntimeClient} ` +
-        `lexRuntimeV2Client ${lexRuntimeV2Client}`);
-      throw new Error('invalid lex client constructor arguments');
+      console.error(
+        `botName: ${botName} botV2Id: ${botV2Id} botV2AliasId ${botV2AliasId} ` +
+          `botV2LocaleId ${botV2LocaleId} lexRuntimeClient ${lexRuntimeClient} ` +
+          `lexRuntimeV2Client ${lexRuntimeV2Client}`
+      );
+      throw new Error("invalid lex client constructor arguments");
     }
 
     this.botName = botName;
     this.botAlias = botAlias;
-    this.userId = userId ||
-      'lex-web-ui-' +
-      `${Math.floor((1 + Math.random()) * 0x10000).toString(16).substring(1)}`;
+    this.userId =
+      userId ||
+      "lex-web-ui-" +
+        `${Math.floor((1 + Math.random()) * 0x10000)
+          .toString(16)
+          .substring(1)}`;
 
     this.botV2Id = botV2Id;
     this.botV2AliasId = botV2AliasId;
     this.botV2LocaleId = botV2LocaleId;
-    this.isV2Bot = (this.botV2Id.length > 0);
-    this.lexRuntimeClient = this.isV2Bot ? lexRuntimeV2Client : lexRuntimeClient;
+    this.isV2Bot = this.botV2Id.length > 0;
+    this.lexRuntimeClient = this.isV2Bot
+      ? lexRuntimeV2Client
+      : lexRuntimeClient;
     this.credentials = this.lexRuntimeClient.config.credentials;
   }
 
   initCredentials(credentials) {
     this.credentials = credentials;
     this.lexRuntimeClient.config.credentials = this.credentials;
-    this.userId = (credentials.identityId) ?
-      credentials.identityId :
-      this.userId;
+    this.userId = credentials.identityId ? credentials.identityId : this.userId;
   }
 
   deleteSession() {
@@ -84,16 +94,17 @@ export default class {
         botAliasId: this.botV2AliasId,
         botId: this.botV2Id,
         localeId: this.botV2LocaleId,
-        sessionId: this.userId,
+        sessionId: this.userId
       });
     } else {
       deleteSessionReq = this.lexRuntimeClient.deleteSession({
         botAlias: this.botAlias,
         botName: this.botName,
-        userId: this.userId,
+        userId: this.userId
       });
     }
-    return this.credentials.getPromise()
+    return this.credentials
+      .getPromise()
       .then(creds => creds && this.initCredentials(creds))
       .then(() => deleteSessionReq.promise());
   }
@@ -108,9 +119,9 @@ export default class {
         sessionId: this.userId,
         sessionState: {
           dialogAction: {
-            type: 'ElicitIntent',
-          },
-        },
+            type: "ElicitIntent"
+          }
+        }
       });
     } else {
       putSessionReq = this.lexRuntimeClient.putSession({
@@ -118,13 +129,42 @@ export default class {
         botName: this.botName,
         userId: this.userId,
         dialogAction: {
-          type: 'ElicitIntent',
-        },
+          type: "ElicitIntent"
+        }
       });
     }
-    return this.credentials.getPromise()
+    return this.credentials
+      .getPromise()
       .then(creds => creds && this.initCredentials(creds))
       .then(() => putSessionReq.promise());
+  }
+  getChartData(msg) {
+    const myEscapedJSONString = msg
+      .replace(/[\"]/g, "")
+      .replace(/[\s]/g, "")
+      .replace(/[\\]/g, '"');
+    const tokens = myEscapedJSONString.split("If");
+    const prompt = tokens[1];
+    const portfolioString = tokens[0];
+    const portfolio = JSON.parse(portfolioString);
+    const chatData = {
+      series: portfolio.percentages,
+      chartOptions: {
+        labels: portfolio.stocks,
+        colors: ["#FF0000", "#00FF00", "#87CEFA"]
+      }
+    };
+    return {
+      chatData,
+      prompt
+    };
+  }
+  shouldDisplayChart(msg) {
+    if (msg && typeof msg.search === "function" && msg.search(/stocks/gi) > 0) {
+      return true;
+    }
+
+    return false;
   }
 
   postText(inputText, localeId, sessionAttributes = {}) {
@@ -133,12 +173,12 @@ export default class {
       postTextReq = this.lexRuntimeClient.recognizeText({
         botAliasId: this.botV2AliasId,
         botId: this.botV2Id,
-        localeId: localeId ? localeId : 'en_US',
+        localeId: localeId ? localeId : "en_US",
         sessionId: this.userId,
         text: inputText,
         sessionState: {
-          sessionAttributes,
-        },
+          sessionAttributes
+        }
       });
     } else {
       postTextReq = this.lexRuntimeClient.postText({
@@ -146,35 +186,39 @@ export default class {
         botName: this.botName,
         userId: this.userId,
         inputText,
-        sessionAttributes,
+        sessionAttributes
       });
     }
-    return this.credentials.getPromise()
+    return this.credentials
+      .getPromise()
       .then(creds => creds && this.initCredentials(creds))
       .then(async () => {
         const res = await postTextReq.promise();
-        if (res.sessionState) { // this is v2 response
+        if (res.sessionState) {
+          // this is v2 response
           res.sessionAttributes = res.sessionState.sessionAttributes;
           if (res.sessionState.intent) {
             res.intentName = res.sessionState.intent.name;
             res.slots = res.sessionState.intent.slots;
             res.dialogState = res.sessionState.intent.state;
             res.slotToElicit = res.sessionState.dialogAction.slotToElicit;
-          }
-          else { // Fallback for some responses that do not have an intent (ElicitIntent, etc)
+          } else {
+            // Fallback for some responses that do not have an intent (ElicitIntent, etc)
             res.intentName = res.interpretations[0].intent.name;
             res.slots = res.interpretations[0].intent.slots;
-            res.dialogState = '';
-            res.slotToElicit = '';
+            res.dialogState = "";
+            res.slotToElicit = "";
           }
           const finalMessages = [];
           if (res.messages && res.messages.length > 0) {
-            res.messages.forEach((mes) => {
-              if (mes.contentType === 'ImageResponseCard') {
-                res.responseCardLexV2 = res.responseCardLexV2 ? res.responseCardLexV2 : [];
+            res.messages.forEach(mes => {
+              if (mes.contentType === "ImageResponseCard") {
+                res.responseCardLexV2 = res.responseCardLexV2
+                  ? res.responseCardLexV2
+                  : [];
                 const newCard = {};
-                newCard.version = '1';
-                newCard.contentType = 'application/vnd.amazonaws.card.generic';
+                newCard.version = "1";
+                newCard.contentType = "application/vnd.amazonaws.card.generic";
                 newCard.genericAttachments = [];
                 newCard.genericAttachments.push(mes.imageResponseCard);
                 res.responseCardLexV2.push(newCard);
@@ -184,15 +228,37 @@ export default class {
                   // push a v1 style messages for use in the UI along with a special property which indicates if
                   // this is the last message in this response. "isLastMessageInGroup" is used to indicate when
                   // an image response card can be displayed.
-                  const v1Format = { type: mes.contentType, value: mes.content, isLastMessageInGroup: "false" };
-                  finalMessages.push(v1Format);
+                  //chart data
+                  if (this.shouldDisplayChart(mes.content)) {
+                    const chatdata = this.getChartData(mes.content);
+                    const v1Format1 = {
+                      type: "chat",
+                      value: chatdata,
+                      isLastMessageInGroup: "false"
+                    };
+                    finalMessages.push(v1Format1);
+                    const v1Format2 = {
+                      type: mes.contentType,
+                      value: chatdata.prompt,
+                      isLastMessageInGroup: "true"
+                    };
+                    finalMessages.push(v1Format2);
+                  } else {
+                    const v1Format = {
+                      type: mes.contentType,
+                      value: mes.content,
+                      isLastMessageInGroup: "false"
+                    };
+                    finalMessages.push(v1Format);
+                  }
                 }
               }
             });
           }
           if (finalMessages.length > 0) {
             // for the last message in the group, set the isLastMessageInGroup to "true"
-            finalMessages[finalMessages.length-1].isLastMessageInGroup = "true";
+            finalMessages[finalMessages.length - 1].isLastMessageInGroup =
+              "true";
             const msg = `{"messages": ${JSON.stringify(finalMessages)} }`;
             res.message = msg;
           } else {
@@ -210,20 +276,20 @@ export default class {
     blob,
     localeId,
     sessionAttributes = {},
-    acceptFormat = 'audio/ogg',
-    offset = 0,
+    acceptFormat = "audio/ogg",
+    offset = 0
   ) {
     const mediaType = blob.type;
     let contentType = mediaType;
 
-    if (mediaType.startsWith('audio/wav')) {
-      contentType = 'audio/x-l16; sample-rate=16000; channel-count=1';
-    } else if (mediaType.startsWith('audio/ogg')) {
+    if (mediaType.startsWith("audio/wav")) {
+      contentType = "audio/x-l16; sample-rate=16000; channel-count=1";
+    } else if (mediaType.startsWith("audio/ogg")) {
       contentType =
-      'audio/x-cbr-opus-with-preamble; bit-rate=32000;' +
+        "audio/x-cbr-opus-with-preamble; bit-rate=32000;" +
         ` frame-size-milliseconds=20; preamble-size=${offset}`;
     } else {
-      console.warn('unknown media type in lex client');
+      console.warn("unknown media type in lex client");
     }
     let postContentReq;
     if (this.isV2Bot) {
@@ -231,12 +297,12 @@ export default class {
       postContentReq = this.lexRuntimeClient.recognizeUtterance({
         botAliasId: this.botV2AliasId,
         botId: this.botV2Id,
-        localeId: localeId ? localeId : 'en_US',
+        localeId: localeId ? localeId : "en_US",
         sessionId: this.userId,
         responseContentType: acceptFormat,
         requestContentType: contentType,
         inputStream: blob,
-        sessionState: compressAndB64Encode(sessionState),
+        sessionState: compressAndB64Encode(sessionState)
       });
     } else {
       postContentReq = this.lexRuntimeClient.postContent({
@@ -246,50 +312,60 @@ export default class {
         userId: this.userId,
         contentType,
         inputStream: blob,
-        sessionAttributes,
+        sessionAttributes
       });
     }
-    return this.credentials.getPromise()
+    return this.credentials
+      .getPromise()
       .then(creds => creds && this.initCredentials(creds))
       .then(async () => {
         const res = await postContentReq.promise();
         if (res.sessionState) {
           const oState = b64CompressedToObject(res.sessionState);
-          res.sessionAttributes = oState.sessionAttributes ? oState.sessionAttributes : {};
+          res.sessionAttributes = oState.sessionAttributes
+            ? oState.sessionAttributes
+            : {};
           if (oState.intent) {
             res.intentName = oState.intent.name;
             res.slots = oState.intent.slots;
             res.dialogState = oState.intent.state;
             res.slotToElicit = oState.dialogAction.slotToElicit;
-          }
-          else {  // Fallback for some responses that do not have an intent (ElicitIntent, etc)
+          } else {
+            // Fallback for some responses that do not have an intent (ElicitIntent, etc)
             res.intentName = oState.interpretations[0].intent.name;
             res.slots = oState.interpretations[0].intent.slots;
-            res.dialogState = '';
-            res.slotToElicit = '';
-          }          
-          res.inputTranscript = res.inputTranscript
-            && b64CompressedToString(res.inputTranscript);
-          res.interpretations = res.interpretations
-            && b64CompressedToObject(res.interpretations);
+            res.dialogState = "";
+            res.slotToElicit = "";
+          }
+          res.inputTranscript =
+            res.inputTranscript && b64CompressedToString(res.inputTranscript);
+          res.interpretations =
+            res.interpretations && b64CompressedToObject(res.interpretations);
           res.sessionState = oState;
           const finalMessages = [];
           if (res.messages && res.messages.length > 0) {
             res.messages = b64CompressedToObject(res.messages);
             res.responseCardLexV2 = [];
-            res.messages.forEach((mes) => {
-              if (mes.contentType === 'ImageResponseCard') {
-                res.responseCardLexV2 = res.responseCardLexV2 ? res.responseCardLexV2 : [];
+
+            res.messages.forEach(mes => {
+              if (mes.contentType === "ImageResponseCard") {
+                res.responseCardLexV2 = res.responseCardLexV2
+                  ? res.responseCardLexV2
+                  : [];
                 const newCard = {};
-                newCard.version = '1';
-                newCard.contentType = 'application/vnd.amazonaws.card.generic';
+                newCard.version = "1";
+                newCard.contentType = "application/vnd.amazonaws.card.generic";
                 newCard.genericAttachments = [];
                 newCard.genericAttachments.push(mes.imageResponseCard);
                 res.responseCardLexV2.push(newCard);
               } else {
                 /* eslint-disable no-lonely-if */
-                if (mes.contentType) { // push v1 style messages for use in the UI
-                  const v1Format = { type: mes.contentType, value: mes.content };
+                if (mes.contentType) {
+                  // push v1 style messages for use in the UI
+                  const v1Format = {
+                    type: mes.contentType,
+                    value: mes.content
+                  };
                   finalMessages.push(v1Format);
                 }
               }
