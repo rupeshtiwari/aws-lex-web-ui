@@ -27,7 +27,7 @@
     "v2BotLocaleId": "en_US",
     "botName": "GWKFG0GZ79",
     "botAlias": "$LATEST",
-    "initialText": "Welcom to FinBERT chat!",
+    "initialText": "Welcome to FinBot chat!",
     "initialSpeechInstruction": "Say 'Order Flowers' to get started.",
     "initialUtterance": "",
     "reInitSessionAttributesOnRestart": false,
