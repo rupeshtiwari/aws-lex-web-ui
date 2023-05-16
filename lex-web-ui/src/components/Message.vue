@@ -2,12 +2,9 @@
   <v-flex d-flex class="message">
     <!-- contains message and response card -->
     <v-layout column ma-2 class="message-layout">
-      <template>
 
-        <apexcharts width="500" height="350" type="pie" :options="chartOptions" :series="series">
-        </apexcharts>
 
-      </template>
+
       <!-- contains message bubble and date -->
       <v-flex d-flex class="message-bubble-date-container">
         <v-layout column class="message-bubble-column">
@@ -130,10 +127,12 @@
       </v-flex>
 
 
-
-
-
-
+      <v-flex v-if="shouldDisplayChart" class="response-card" d-flex mt-2 mr-2 ml-3>
+        <template>
+          <apexcharts width="500" height="350" type="pie" :options="chartOptions" :series="series">
+          </apexcharts>
+        </template>
+      </v-flex>
 
       <v-flex v-if="shouldDisplayResponseCard" class="response-card" d-flex mt-2 mr-2 ml-3>
         <response-card v-for="(card, index) in message.responseCard.genericAttachments" v-bind:response-card="card"
@@ -200,19 +199,14 @@ export default {
   },
   computed: {
     series() {
-      return [1, 2, 3];
+      return this.message?.text?.chatData?.series;
     },
     chartOptions() {
-      return {
-        labels: ["AAPL, BAC", "AMZ", "GOOGL,META"],
-        colors: ["#FF0000", "#00FF00", "#87CEFA"],
-
-      };
+      return this.message?.text?.chatData?.chartOptions;
     },
 
     shouldDisplayChart() {
-      const msg = this.$store.state.messages[this.$store.state.messages.length - 2];
-      const canShow = msg?.text?.chatData != null;
+      const canShow = this.message?.text?.chatData != null;
       return canShow;
     },
 

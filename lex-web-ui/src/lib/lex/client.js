@@ -139,13 +139,13 @@ export default class {
       .then(() => putSessionReq.promise());
   }
   getChartData(msg) {
-    const myEscapedJSONString = msg
+    const tokens = msg.split("If");
+    const prompt = "If".concat(tokens[1].replace(/[\\\"]/g, ""));
+    const portfolioString = tokens[0]
       .replace(/[\"]/g, "")
       .replace(/[\s]/g, "")
       .replace(/[\\]/g, '"');
-    const tokens = myEscapedJSONString.split("If");
-    const prompt = tokens[1];
-    const portfolioString = tokens[0];
+
     const portfolio = JSON.parse(portfolioString);
     const chatData = {
       series: portfolio.percentages,
