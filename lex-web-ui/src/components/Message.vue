@@ -15,16 +15,7 @@
               </div>
               <div tabindex="0" v-on:focus="onMessageFocus" v-on:blur="onMessageBlur" class="message-bubble focusable">
 
-                <v-flex v-if="'text' in message && message.text !== null && shouldDisplayChart" class="response-card"
-                  d-flex mt-2 mr-2 ml-3>
-                  <template>
-                    <div class="example">
-                      <apexcharts width="500" height="350" type="pie" :options="chartData.chartOptions"
-                        :series="chartData.series">
-                      </apexcharts>
-                    </div>
-                  </template>
-                </v-flex>
+
 
                 <message-text v-bind:message="message"
                   v-if="'text' in message && message.text !== null && message.text.length && !shouldDisplayInteractiveMessage"></message-text>
@@ -132,7 +123,15 @@
           </v-flex>
         </v-layout>
       </v-flex>
-
+      <v-flex v-if="'text' in message && message.text !== null && shouldDisplayChart" class="response-card" d-flex mt-2
+        mr-2 ml-3>
+        <template>
+          <div class="example">
+            <apexcharts width="500" height="350" type="pie" :options="chartData.chartOptions" :series="chartData.series">
+            </apexcharts>
+          </div>
+        </template>
+      </v-flex>
 
       <v-flex v-if="shouldDisplayResponseCard" class="response-card" d-flex mt-2 mr-2 ml-3>
         <response-card v-for="(card, index) in message.responseCard.genericAttachments" v-bind:response-card="card"
