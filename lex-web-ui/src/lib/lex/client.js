@@ -150,9 +150,14 @@ export default class {
     const chatData = {
       series: portfolio.percentages,
       chartOptions: {
-        labels: portfolio.stocks,
+        labels: portfolio.stocks.map((x, i) => {
+          if (i === 0) return `NEGATIVE: ${x}`;
+          if (i === 1) return `POSITIVE: ${x}`;
+          if (i === 2) return `NEUTRAL: ${x}`;
+        }),
         colors: ["#FF0000", "#00FF00", "#87CEFA"]
-      }
+      },
+      portfolio
     };
     return {
       chatData,
@@ -231,6 +236,13 @@ export default class {
                   //chart data
                   if (this.shouldDisplayChart(mes.content)) {
                     const chatdata = this.getChartData(mes.content);
+
+                    // const v1Format0 = {
+                    //   type: mes.contentType,
+                    //   value: "Jane Smith's portfolio has " + chatdata.portfolio.RiskScore +" risk profile.",
+                    //   isLastMessageInGroup: "false"
+                    // };
+                    // finalMessages.push(v1Format0);
                     const v1Format1 = {
                       type: "chat",
                       value: chatdata,

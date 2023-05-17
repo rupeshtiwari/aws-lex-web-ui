@@ -127,11 +127,28 @@
       </v-flex>
 
 
-      <v-flex v-if="shouldDisplayChart" class="response-card" d-flex mt-2 mr-2 ml-3>
-        <template>
-          <apexcharts width="500" height="350" type="pie" :options="chartOptions" :series="series">
-          </apexcharts>
-        </template>
+
+      <v-flex v-if="shouldDisplayChart">
+        <v-flex d-flex class="message-bubble-date-container">
+          <v-layout column class="message-bubble-column">
+            <!-- contains message bubble and avatar -->
+            <v-flex d-flex class="message-bubble-avatar-container">
+              <v-layout row class="message-bubble-row">
+                <div tab-index="0" class="message-bubble focusable"> {{ riskscoreMessage.text }}</div>
+              </v-layout>
+            </v-flex>
+          </v-layout>
+        </v-flex>
+
+        <v-card-text>
+
+          <div>
+            <template>
+              <apexcharts width="500" type="pie" :options="chartOptions" :series="series">
+              </apexcharts>
+            </template>
+          </div>
+        </v-card-text>
       </v-flex>
 
       <v-flex v-if="shouldDisplayResponseCard" class="response-card" d-flex mt-2 mr-2 ml-3>
@@ -198,6 +215,7 @@ export default {
     };
   },
   computed: {
+    riskscoreMessage() { return { text: `Mr. James Smith's portfolio has ${this.message?.text?.chatData?.portfolio?.RiskScore} risk score.` }; },
     series() {
       return this.message?.text?.chatData?.series;
     },
